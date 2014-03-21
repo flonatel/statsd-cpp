@@ -4,6 +4,9 @@ statsd-cpp
 Implementation of the statsd in C++
 
 
+[![Build
+Status](https://secure.travis-ci.org/flonatel/statsd-cpp.png)](http://travis-ci.org/flonatel/statsd-cpp)
+
 # Introduction #
 
 *Measure Anything, Measure Everything* is the philosophy behind the
