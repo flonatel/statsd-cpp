@@ -10,19 +10,19 @@ Status](https://secure.travis-ci.org/flonatel/statsd-cpp.png)](http://travis-ci.
 
 ## Think! Measure reliable! ##
 Think what you want to measure and do this reliable. Numbers which are
-generated only from a small portion of the data (and you don't known
-how many data sets and which data was deleted) is worthless.
+generated only from a small portion of the data (and it is even not known
+how many and which data was deleted) is worthless.
 
 [*Measure Anything, Measure
 Everything*](http://codeascraft.com/2011/02/15/measure-anything-measure-everything/)
-is the philosophy behind the inventors of the original [etsy
+is the philosophy behind the inventors of the original [Etsy
 statsd](https://github.com/etsy/statsd/).  [Performance
-tests](doc/PerformanceEtsyStatsd.md) have shown that this cannot be
-accomplished with the philosophy and technology implemented in the
-etsy statsd especially for systems with a lot of events.
+tests](doc/PerformanceEtsyStatsd.md) have shown that this aim cannot be
+accomplished with the ideas and technology implemented in the
+Etsy statsd - especially for systems with a lot of events.
 
 ## Reinvent the Wheel? ##
-There are many implementation of statsd available.  Nevertheless: the
+[There are many implementation of statsd](http://joemiller.me/2011/09/21/list-of-statsd-server-implementations) available.  Nevertheless: the
 existing implementations have all some limitations.  Most of them are
 written in some interpreted or *strange* language (from the point of a
 C / C++ programmer) which cannot rolled out in the production systems
