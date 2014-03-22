@@ -18,15 +18,15 @@ is used.
 As a client the [udpclient.cc](../test/performance/udpclient.cc) was
 used. It sends out 1.000.000 times the same counter.
 
-As the server <code>socat</code> was used: socat TCP-LISTEN:12003,fork -
+As the server <code>socat</code> was used: <code>socat TCP-LISTEN:12003,fork -</code>
 
 # Running tests #
 All the described tests were run a couple of time with similar results
 as shown here.
 
 ## One Client ##
-socat and statds.js were started, then one instance of the client was
-started.
+<code>socat</code> and <code>statds.js</code> were started, then one
+instance of the client was started.
 
 The output:
 
@@ -75,9 +75,9 @@ The output:
 1.000.000 UDP packets were send out. The counter is at: 111227. This
 gives a drop rate of about 89%.
 
-## Tem Client ##
-socat and statds.js were started, then ten instance of the client were
-started simultaneously.
+## Ten Clients ##
+<code>socat</code> and <code>statds.js</code> were started, then ten
+instance of the client were started simultaneously.
 
 The output:
 
@@ -141,7 +141,7 @@ The output:
 Because the ten clients run more than 12s, the counters increase does
 not fit into one 10s interval.
 
-The complete number of packets in this test are: 53079 + 70280 =
+The complete number of packets in this test is: 53079 + 70280 =
 123359
 
 Ten clients send out 10.000.000 packets, therefore the drop rate is:

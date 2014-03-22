@@ -8,16 +8,23 @@ Status](https://secure.travis-ci.org/flonatel/statsd-cpp.png)](http://travis-ci.
 
 # Introduction #
 
+## Think! Measure reliable! ##
 *Measure Anything, Measure Everything* is the philosophy behind the
-inventors of the original [etsy statsd](https://github.com/etsy/statsd/).
+inventors of the original [etsy
+statsd](https://github.com/etsy/statsd/).
+Our performance tests showed, that this cannot be accomplished with
+the current philosophy and technology. 
 
-Nevertheless: the existing implementations I found have all some
+## Reinvent the Wheel? ##
+There are many, many implementation of statds available.
+Nevertheless: the existing implementations have all some
 limitations.  Most of them are written in some interpreted or
 *strange* language (from the point of a C / C++ programmer) which
-cannot rolled out in the production systems I had to support. There is
-one C implementation (https://github.com/jbuchbinder/statsd-c) which
-has many bugs and design issues. The test coverage of mostly all
-implementations is not that high.
+cannot rolled out in the production systems (at least where I am
+working). There is one C implementation
+(https://github.com/jbuchbinder/statsd-c) which has many bugs and
+design issues. The test coverage of mostly all implementations is not
+that high.
 
 # Status #
 
@@ -28,8 +35,19 @@ This project is currently in basic thinking / design phase. (Phase 1)
 Some [performance tests](doc/PerformanceEtsyStatsd.md) were done with
 the original [etsy statsd](https://github.com/etsy/statsd/).
 
+The result here: when you have clients which send out every small
+statistics event in an own UDP packet, this implementation is not fast
+/ reliable enough.  Depending on the tests drop rates from nearly 90%
+to more then 98% could be seen.
+
+Tests with other languages were done (Python and C++). These tests
+just send out / receive UDP packets without any computation.
 See the [performance document](doc/PerformanceTests.md) for performance results
 sending and receiving UDP packets.
+
+This lowers the drop rate: here drop rates between 0% and 70% were
+measured. This is better than the original Javascript based
+implementation - but still not good.
 
 # Requirements #
 

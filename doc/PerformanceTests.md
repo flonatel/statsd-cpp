@@ -129,7 +129,7 @@ There are drops, but the drop rate is much lower than in tests with
 the python server.
 
 
-## 10 C++ Clients with 1 C++ Server ##
+## Ten C++ Clients with one C++ Server ##
 Running 10 clients in parallel, increases the time each client runs to
 more then 12s. Here is the output of the server:
 
