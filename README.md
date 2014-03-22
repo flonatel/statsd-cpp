@@ -13,23 +13,23 @@ Think what you want to measure and do this reliable. Numbers which are
 generated only from a small portion of the data (and you don't known
 how many data sets and which data was deleted) is worthless.
 
-*Measure Anything, Measure Everything* is the philosophy behind the
-inventors of the original [etsy
-statsd](https://github.com/etsy/statsd/).  Performance tests
-has shown, that this cannot be accomplished with the philosophy
-and technology implemented in the etsy statds especially for systems
-with a lot of events.
+[*Measure Anything, Measure
+Everything*](http://codeascraft.com/2011/02/15/measure-anything-measure-everything/)
+is the philosophy behind the inventors of the original [etsy
+statsd](https://github.com/etsy/statsd/).  Performance tests has
+shown, that this cannot be accomplished with the philosophy and
+technology implemented in the etsy statds especially for systems with
+a lot of events.
 
 ## Reinvent the Wheel? ##
-There are many implementation of statds available.
-Nevertheless: the existing implementations have all some
-limitations.  Most of them are written in some interpreted or
-*strange* language (from the point of a C / C++ programmer) which
-cannot rolled out in the production systems (at least where I am
-working). There is one C implementation
-(https://github.com/jbuchbinder/statsd-c) which has many bugs and
-design issues. The test coverage of mostly all implementations is not
-that high - if there exists a test at all.
+There are many implementation of statds available.  Nevertheless: the
+existing implementations have all some limitations.  Most of them are
+written in some interpreted or *strange* language (from the point of a
+C / C++ programmer) which cannot rolled out in the production systems
+(at least where I am working). There is one [C
+implementation](https://github.com/jbuchbinder/statsd-c) which has
+many bugs and design issues. The test coverage of mostly all
+implementations is not that high - if there exists a test at all.
 
 # Status #
 
