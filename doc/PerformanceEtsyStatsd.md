@@ -11,14 +11,14 @@ Intel(R) Core(TM) i7-4600U CPU @ 2.10GHz, 16GRam inside a VM.
 
 # Setup #
 
-(Original statsd trunk from
-2014-03-22)[https://github.com/etsy/statsd/commit/de7a7bf0097f220ef4ed77c822ba9be5409831ad]
+[Original statsd trunk from
+2014-03-22](https://github.com/etsy/statsd/commit/de7a7bf0097f220ef4ed77c822ba9be5409831ad)
 is used.
 
 As a client the [udpclient.cc](../test/performance/udpclient.cc) was
 used. It sends out 1.000.000 times the same counter.
 
-As the server socat was used: socat TCP-LISTEN:12003,fork -
+As the server <code>socat</code> was used: socat TCP-LISTEN:12003,fork -
 
 # Running tests #
 All the described tests were run a couple of time with similar results
