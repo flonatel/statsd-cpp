@@ -1,5 +1,16 @@
 language: c++
+
 compiler:
   - gcc
   - clang
-script: build/init_autotools.sh && ./configure && make && make bbtests
+
+before_script:
+  - echo 'yes' | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update
+  - sudo apt-get install gcc-4.8
+
+script:
+  - build/init_autotools.sh
+  - CC=gcc-4.8 CXX=g++4.8 ./configure 
+  - make 
+  - make bbtests
