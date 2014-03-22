@@ -4,7 +4,7 @@ Performance Tests
 Several performance tests were done to get information how many
 packages can be handled by the system with the appropriate language.
 
-The timings were done on my laptop: Dell Latitude E7440:
+The tests were run on a laptop: Dell Latitude with
 Intel(R) Core(TM) i7-4600U CPU @ 2.10GHz, 16GRam inside a VM.
 
 # Python #
@@ -23,7 +23,7 @@ Which gives: 154164 packets / sec.
 This is the more 'natural' way: a statsd is running on the local
 machine as well as some clients.
 
-Programs [udpclient](../test/performance/udpclient.py) and
+Programs [udpclient.py](../test/performance/udpclient.py) and
 [udpserver](../test/performance/udpserver.py) were used.
 
 ### Client Results ###

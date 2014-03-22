@@ -3,14 +3,13 @@ statsd-cpp
 
 Implementation of the statsd in C++
 
-
 [![Build
 Status](https://secure.travis-ci.org/flonatel/statsd-cpp.png)](http://travis-ci.org/flonatel/statsd-cpp)
 
 # Introduction #
 
 *Measure Anything, Measure Everything* is the philosophy behind the
-inventors of the original statsd (https://github.com/etsy/statsd/).
+inventors of the original [etsy statsd](https://github.com/etsy/statsd/).
 
 Nevertheless: the existing implementations I found have all some
 limitations.  Most of them are written in some interpreted or
@@ -26,6 +25,9 @@ This project is currently in basic thinking / design phase. (Phase 1)
 (Sorry - no source code until now.)
 
 # Performance Considerations #
+Some [performance tests](doc/PerformanceEtsyStatsd.md) were done with
+the original [etsy statsd](https://github.com/etsy/statsd/).
+
 See the [performance document](doc/PerformanceTests.md) for performance results
 sending and receiving UDP packets.
 
