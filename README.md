@@ -37,6 +37,7 @@ This project is currently in basic thinking / design phase. (Phase 1)
 (Sorry - no source code yet.)
 
 # Performance Considerations #
+
 Some [performance tests](doc/PerformanceEtsyStatsd.md) were done with
 the original [etsy statsd](https://github.com/etsy/statsd/).
 
@@ -53,7 +54,9 @@ results](doc/PerformanceTests.md) sending and receiving UDP packets.
 Using a lower-level programing language lowers the drop rate: here
 drop rates between 0% and 70% were measured. This is better than the
 original Javascript based implementation - but still not what is
-expected.
+expected.  Mostly the same results were measured using the
+[statsite](https://github.com/armon/statsite) implementation: when
+using UDP 70-80% drop rate when using ten clients.
 
 # Requirements #
 
