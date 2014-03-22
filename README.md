@@ -71,15 +71,15 @@ approach.  This program is implemented using TDD.
 
 ### Performance ###
 Lets assume the following *prototype system*:
-A system with which handles about 5000 packages / sec.  The packages
+A system with which handles about 10.000 packages / sec.  The packages
 are worked on, business decisions are made, some are thrown away -
 others are handled to the next process.  In this example it is assumed
-that each process makes ten decisions - which gives 20 counter
+that each process makes 20 decisions - which gives 20 counter
 increments per packet and process.  Additionally there are additional
 counters for queue lengths, timings and so on, which easily doubles the
 needed performance.
 
-This results in 5.000 * 20 * 10 * 2 = 2.000.000 events to count each
+This results in 10.000 * 20 * 10 * 2 = 4.000.000 events to count each
 second. 
 
 ## Phase 1 ##
