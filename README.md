@@ -22,9 +22,12 @@ implementations is not that high.
 
 # Status #
 
-This project is currently in requirement management / collection
-phase. (Phase 1)
+This project is currently in basic thinking / design phase. (Phase 1)
 (Sorry - no source code until now.)
+
+# Performance Considerations #
+See the [performance document](doc/PerformanceTests.md) for performance results
+sending and receiving UDP packets.
 
 # Requirements #
 
@@ -37,7 +40,7 @@ approach.  This program is implemented using TDD rules.
 
  1. Implement original statds protocol from clients.
  2. Implement protocol to export to graphite.
- 3. High performance: handle at least 10.000 requests per second.
+ 3. High performance: handle 25.000 requests per second.
 
 ### Implementation considerations ###
 
@@ -46,13 +49,20 @@ approach.  This program is implemented using TDD rules.
 
 ## Phase 1 ##
 
+Aim: Get some information and a feeling about sending and receiving UDP
+     packets
+
+ 1. Write a UDP server and client based on python (my preferred test
+    environment).
+ 2. Measure how many UDP packages can be send and received with the
+    python test client.
+ 3. Decide if there is the need to do further speed improvements.
+
+## Phase N ##
+
 Aim: Design
 
  1. Write down the design ideas.
  2. Think about the language details (C++03, C++11, g++, clang, ....).
  3. Decide which libraries to use (e.g. openssl, ptl, poco, ...)
-
-## Phase 2 ##
-
- To be filled out when the design is done.
 
