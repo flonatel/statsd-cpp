@@ -16,13 +16,13 @@ how many data sets and which data was deleted) is worthless.
 [*Measure Anything, Measure
 Everything*](http://codeascraft.com/2011/02/15/measure-anything-measure-everything/)
 is the philosophy behind the inventors of the original [etsy
-statsd](https://github.com/etsy/statsd/).  Performance tests has
-shown, that this cannot be accomplished with the philosophy and
-technology implemented in the etsy statds especially for systems with
-a lot of events.
+statsd](https://github.com/etsy/statsd/).  [Performance
+tests](doc/PerformanceEtsyStatsd.md) have shown that this cannot be
+accomplished with the philosophy and technology implemented in the
+etsy statsd especially for systems with a lot of events.
 
 ## Reinvent the Wheel? ##
-There are many implementation of statds available.  Nevertheless: the
+There are many implementation of statsd available.  Nevertheless: the
 existing implementations have all some limitations.  Most of them are
 written in some interpreted or *strange* language (from the point of a
 C / C++ programmer) which cannot rolled out in the production systems
@@ -34,38 +34,40 @@ implementations is not that high - if there exists a test at all.
 # Status #
 
 This project is currently in basic thinking / design phase. (Phase 1)
-(Sorry - no source code until now.)
+(Sorry - no source code yet.)
 
 # Performance Considerations #
 Some [performance tests](doc/PerformanceEtsyStatsd.md) were done with
 the original [etsy statsd](https://github.com/etsy/statsd/).
 
-The results: when you have clients which send out every small
-statistics event in an own UDP packet, this implementation is not fast
-/ reliable enough.  Depending on the tests drop rates from nearly 90%
-to more then 98% could be seen.
+The results: when you have clients which send out every statistics
+event in an separate UDP packet, this implementation is not fast / reliable
+enough.  Depending on the tests drop rates from nearly 90% to more
+then 98% could be seen.
 
 Tests with other languages were done (Python and C++). These tests
 just send out / receive UDP packets without any parsing or
-computation. See the [performance document](doc/PerformanceTests.md)
-for performance results sending and receiving UDP packets.
+computation. See the [document of performance
+results](doc/PerformanceTests.md) sending and receiving UDP packets.
 
-This lowers the drop rate: here drop rates between 0% and 70% were
-measured. This is better than the original Javascript based
-implementation - but still not what is expected.
+Using a lower-level programing language lowers the drop rate: here
+drop rates between 0% and 70% were measured. This is better than the
+original Javascript based implementation - but still not what is
+expected.
 
 # Requirements #
 
 There will be some phases of this project. This gives a lean and agile
-approach.  This program is implemented using TDD rules.
+approach.  This program is implemented using TDD.
 
 ## Requirements ##
 
 ### High Level ###
- 1. Implement original statds protocol from clients.
- 2. Implement protocol to export to graphite.
- 3. Program must be reliable.
- 4. Program must be stable.
+ 1. Implement original statsd protocol for clients.
+ 2. Implement additional reliable protocol for clients.
+ 3. Implement protocol to export to graphite.
+ 4. Program must be reliable.
+ 5. Program must be stable.
 
 ### Performance ###
 Lets assume the following *prototype system*:
@@ -74,18 +76,16 @@ are worked on, business decisions are made, some are thrown away -
 others are handled to the next process.  In this example it is assumed
 that each process makes ten decisions - which gives 20 counter
 increments per packet and process.  Additionally there are additional
-counters for queue length, timings and so on, which easily doubles the
+counters for queue lengths, timings and so on, which easily doubles the
 needed performance.
 
 This results in 5.000 * 20 * 10 * 2 = 2.000.000 events to count each
 second. 
 
-Each process increments a counter 
-
 ## Phase 1 ##
 
 Aim: Get some information and a feeling about sending and receiving UDP
-     packets and existing statds implementations.
+     packets and existing statsd implementations.
 
  1. Perform some basic performance tests with the original etsy
     statsd. 
