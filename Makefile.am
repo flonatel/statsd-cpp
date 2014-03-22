@@ -23,3 +23,4 @@ TESTS =
 
 # Generics
 include build/MakefileBlackbox.inc
+include src/Makefile.inc
