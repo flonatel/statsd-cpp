@@ -71,6 +71,8 @@ approach.  This program is implemented using TDD.
  3. Implement protocol to export to graphite.
  4. Program must be reliable.
  5. Program must be stable.
+ 6. Program must be easy testable.
+ 7. Statistics should consume only very few resources.
 
 ### Performance ###
 Lets assume the following *prototype system*:
