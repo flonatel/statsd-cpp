@@ -11,7 +11,7 @@ Intel(R) Core(TM) i7-4600U CPU @ 2.10GHz, 16GRam inside a VM.
 
 ## Client Only ##
 When running only the client (which sends out UDP packets)
-with the program [udpclient.py](test/performance/udpclient.py) the
+with the program [udpclient.py](../test/performance/udpclient.py) the
 following results were measured:
 
 Average of 5 tests sending out 1.000.000 packets each:
@@ -23,8 +23,8 @@ Which gives: 154164 packets / sec.
 This is the more 'natural' way: a statsd is running on the local
 machine as well as some clients.
 
-Programs [udpclient](test/performance/udpclient.py) and
-[udpserver](test/performance/udpserver.py) were used.
+Programs [udpclient](../test/performance/udpclient.py) and
+[udpserver](../test/performance/udpserver.py) were used.
 
 ### Client Results ###
 Average of 5 tests sending out 1.000.000 packets each:
@@ -63,7 +63,7 @@ drop rate of (sometimes) more then 10%.
 
 ## Client Only ##
 Running also the client (without any server) using
-[udpclient.cc](test/performance/udpclient.cc) the following results
+[udpclient.cc](../test/performance/udpclient.cc) the following results
 were measured:
 
 Average of 5 tests sending out 1.000.000 packets each:
