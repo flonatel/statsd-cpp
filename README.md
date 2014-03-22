@@ -9,12 +9,16 @@ Status](https://secure.travis-ci.org/flonatel/statsd-cpp.png)](http://travis-ci.
 # Introduction #
 
 ## Think! Measure reliable! ##
+Think what you want to measure and do this reliable. Numbers which are
+generated only from a small portion of the data (and you don't known
+how many data sets and which data was deleted) is worthless.
+
 *Measure Anything, Measure Everything* is the philosophy behind the
 inventors of the original [etsy
-statsd](https://github.com/etsy/statsd/).
-Our performance tests showed, that this cannot be accomplished with
-the current philosophy and technology for systems with high event
-numbers. 
+statsd](https://github.com/etsy/statsd/).  Performance tests
+has shown, that this cannot be accomplished with the philosophy
+and technology implemented in the etsy statds especially for systems
+with a lot of events.
 
 ## Reinvent the Wheel? ##
 There are many implementation of statds available.
@@ -55,14 +59,28 @@ implementation - but still not what is expected.
 There will be some phases of this project. This gives a lean and agile
 approach.  This program is implemented using TDD rules.
 
-## Basic Ideas ##
+## Requirements ##
 
-### Major requirements ###
-
+### High Level ###
  1. Implement original statds protocol from clients.
  2. Implement protocol to export to graphite.
  3. Program must be reliable.
  4. Program must be stable.
+
+### Performance ###
+Lets assume the following *prototype system*:
+A system with which handles about 5000 packages / sec.  The packages
+are worked on, business decisions are made, some are thrown away -
+others are handled to the next process.  In this example it is assumed
+that each process makes ten decisions - which gives 20 counter
+increments per packet and process.  Additionally there are additional
+counters for queue length, timings and so on, which easily doubles the
+needed performance.
+
+This results in 5.000 * 20 * 10 * 2 = 2.000.000 events to count each
+second. 
+
+Each process increments a counter 
 
 ## Phase 1 ##
 
