@@ -2,12 +2,11 @@ language: c++
 
 compiler:
   - gcc
-  - clang
 
 before_script:
   - echo 'yes' | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
   - sudo apt-get update
-  - sudo apt-get install gcc-4.8
+  - sudo apt-get install gcc-4.8 g++4.8 python-nose
 
 script:
   - build/init_autotools.sh
