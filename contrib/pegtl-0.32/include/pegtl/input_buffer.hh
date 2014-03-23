@@ -321,6 +321,16 @@ namespace pegtl
 	 m_run = iter;
       }
 
+      std::string debug_escape( const iterator & begin, const iterator & end ) const
+      {
+	 std::string nrv;
+
+	 for ( iterator run = begin; run != end; ++run ) {
+	    escape_impl( nrv, * run );
+	 }
+	 return nrv;
+      }
+
    protected:
       mutable buffer_impl< Iterator > m_buffer;
       iterator m_run;
