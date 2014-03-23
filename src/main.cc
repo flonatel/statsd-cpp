@@ -3,7 +3,7 @@
 namespace statsd {
 
 // Grammar for a counter:
-// ([:alpha:]|[:digit:].)+:[:digit:]+|c
+// ([:alpha:]|[:digit:]|.)+:[:digit:]+|c
 
 using namespace pegtl;
 
@@ -21,6 +21,14 @@ struct set_name
    }
 };
 
+struct set_counter_increment
+   : action_base< set_counter_increment >  {
+   static void apply(std::string const & m, statsd_data & s) {
+      std::cout << "Set counter inc [" << m << "]" << std::endl;
+      s.counter_increment = std::stol(m);
+   }
+};
+
 // This is simple, because currently only counters 'c' are supported.
 struct read_type_char
    : string<'c'> {};
@@ -33,9 +41,9 @@ struct read_name
 
 struct read_statsd_line
    : seq< ifapply< read_name, set_name >,
-          string<':'>,
-          read_counter_increment,
-          string<'|'>,
+          one< ':' >,
+          ifapply< read_counter_increment, set_counter_increment >,
+          one< '|' >,
           read_type_char,
           eol> {};
 
@@ -45,8 +53,28 @@ struct read_statsd_protocol
 
 int main() {
    statsd::statsd_data data;
-   pegtl::trace_parse_input< statsd::read_statsd_protocol >(true,
+
+// My expextation is, that the both implementation do the same
+// thing.
+// call with:
+// $ printf "h:93373|c\n" | ./bin/statsd
+
+#if 0
+// Looks that this is somewhat buggy:
+// o Data in ifapply is always empty
+// o Logs parse error at digit
+   pegtl::basic_parse_input< statsd::read_statsd_protocol >(
       std::istream_iterator< char >( std::cin ),
       std::istream_iterator< char >(), data);
+#else
+   while(std::cin) {
+      std::string line;
+      std::getline(std::cin, line);
+      if(!std::cin) break;
+      pegtl::basic_parse_string< statsd::read_statsd_line >(
+         line, data);
+   }
+#endif
+
    return 0;
 }
