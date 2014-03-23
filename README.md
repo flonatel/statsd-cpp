@@ -140,7 +140,7 @@ This is a list of ideas and open points.
 
  1. What about reading from stdin and passing the output to stdout?
     (statsite has a similar approach):
-    <code>socat UDP-LISTEN:8125,fork - | statsdcpp | socat - TCP:localhost:2003</code>
+    <code>socat UDP-LISTEN:8125,fork - | statsd | socat - TCP:localhost:2003</code>
     This will also simplify testing dramatically.
 
 

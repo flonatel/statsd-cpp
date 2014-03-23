@@ -4,7 +4,7 @@ import subprocess
 class BBT_Simple(unittest.TestCase):
 
     def setUp(self):
-        self.dn = file("/dev/null", "w")
+        self.dn = file("/tmp/null", "w")
 
     def run_process(self, sinput):
         binary = "bin/statsd"
@@ -19,8 +19,6 @@ class BBT_Simple(unittest.TestCase):
         return p, l
 
     def bbt_run1(self):
-        p, l = self.run_process("Hallo")
-        print(p)
-        print(l)
+        p, l = self.run_process("a:1|c")
 
-        self.assertEqual(p, l)
+        self.assertEqual(['a: 1\n'], l)
