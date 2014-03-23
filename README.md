@@ -100,6 +100,17 @@ Aim: Get some information and a feeling about sending and receiving UDP
     python test client.
  4. Decide if there is the need to do further speed improvements.
 
+### Very first results ###
+The very first partial implementation (which makes massive use of
+strings), was tested.  The bench.py script from statsite was used:
+
+    3.39 sec	 - 309130 ops/sec
+    7.11 sec	 - 294770 ops/sec
+    10.85 sec	 - 289992 ops/sec
+    14.52 sec	 - 288949 ops/sec
+
+Which gives some room for optimization :-)
+
 
 # Collection of Ideas #
 

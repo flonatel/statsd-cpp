@@ -2,16 +2,16 @@
 
 namespace statsd {
 
-std::map< std::string, uint64_t > counters;
+std::map< std::string, double > counters;
 
 // Grammar for a counter:
-// ([:alpha:]|[:digit:]|.)+:[:digit:]+|c
+// ([:alpha:]|[:digit:]|.)+:([:digit:]|.)+|c
 
 using namespace pegtl;
 
 struct statsd_data {
    std::string name;
-   uint64_t    counter_increment;
+   double      counter_increment;
    char        type;
 };
 
@@ -19,22 +19,19 @@ struct set_name
    : action_base< set_name >  {
    static void apply(std::string const & m, statsd_data & s) {
       s.name = m;
-      std::cout << "Set name [" << m << "]" << std::endl;
    }
 };
 
 struct set_counter_increment
    : action_base< set_counter_increment >  {
    static void apply(std::string const & m, statsd_data & s) {
-      std::cout << "Set counter inc [" << m << "]" << std::endl;
-      s.counter_increment = std::stol(m);
+      s.counter_increment = std::stod(m);
    }
 };
 
 struct set_type_char
    : action_base< set_type_char >  {
    static void apply(std::string const & m, statsd_data & s) {
-      std::cout << "Set type char [" << m << "]" << std::endl;
       s.type = m[0];
    }
 };
@@ -42,7 +39,6 @@ struct set_type_char
 struct increment_counter
    : action_base< increment_counter >  {
    static void apply(std::string const & /* m */, statsd_data & s) {
-      std::cout << "Increment counter [" << s.name << "]" << std::endl;
       auto const g(counters.find(s.name));
       if(g==counters.end()) {
          counters.insert(std::make_pair(s.name, s.counter_increment));
@@ -57,7 +53,8 @@ struct read_type_char
    : string<'c'> {};
 
 struct read_counter_increment
-   : plus< digit > {};
+// ToDo: this is not really the expression for double
+   : plus< sor< digit, string<'.'> > > {};
 
 struct read_name
    : plus< sor< alnum, string<'.'> > > {};
