@@ -22,11 +22,14 @@ accomplished with the ideas and technology implemented in the
 Etsy statsd - especially for systems with a lot of events.
 
 ## Reinvent the Wheel? ##
-[There are many implementation of statsd](http://joemiller.me/2011/09/21/list-of-statsd-server-implementations) available.  Nevertheless: the
-existing implementations have all some limitations.  Most of them are
-written in some interpreted or *strange* language (from the point of a
-C / C++ programmer) which cannot rolled out in the production systems
-(at least where I am working). There is one [C
+
+[There are many implementations of
+statsd](http://joemiller.me/2011/09/21/list-of-statsd-server-implementations)
+available.  Nevertheless: the existing implementations have all some
+limitations.  Most of them are written in some interpreted or
+*strange* language (from the point of a C / C++ programmer) which
+cannot rolled out in the production systems (at least where I am
+working). There is one [C
 implementation](https://github.com/jbuchbinder/statsd-c) which has
 many bugs and design issues. The test coverage of mostly all
 implementations is not that high - if there exists a test at all.
@@ -87,7 +90,7 @@ needed performance.
 This results in 10.000 * 20 * 10 * 2 = 4.000.000 events to count each
 second. 
 
-## Phase 1 ##
+# Phase 1 #
 
 Aim: Get some information and a feeling about sending and receiving UDP
      packets and existing statsd implementations.
@@ -100,7 +103,7 @@ Aim: Get some information and a feeling about sending and receiving UDP
     python test client.
  4. Decide if there is the need to do further speed improvements.
 
-### Very first results ###
+## Very first results ##
 The very first partial implementation (which makes massive use of
 strings), was tested.  The bench.py script from statsite was used:
 
@@ -110,6 +113,25 @@ strings), was tested.  The bench.py script from statsite was used:
     14.52 sec	 - 288949 ops/sec
 
 Which gives some room for optimization :-)
+
+
+# Development Environment Setup #
+
+To get the current environment set up, do:
+
+    git clone https://github.com/flonatel/statsd-cpp.git
+    cd statsd-cpp
+    ./build/init_autotools.sh
+    cd ..
+    mkdir BUILD-statsd
+    cd BUILD-statsd
+    ${PWD}/../statsd-cpp/configure --enable-debug
+    make
+    make bbtests
+
+You need at least g++-4.7 installed. If you are running
+Ubuntu 12.04 LTS you might want to have a look at the [Travis CI
+configuration file](.travis.yml).
 
 
 # Collection of Ideas #
