@@ -2,6 +2,8 @@
 
 namespace statsd {
 
+std::map< std::string, uint64_t > counters;
+
 // Grammar for a counter:
 // ([:alpha:]|[:digit:]|.)+:[:digit:]+|c
 
@@ -29,6 +31,27 @@ struct set_counter_increment
    }
 };
 
+struct set_type_char
+   : action_base< set_type_char >  {
+   static void apply(std::string const & m, statsd_data & s) {
+      std::cout << "Set type char [" << m << "]" << std::endl;
+      s.type = m[0];
+   }
+};
+
+struct increment_counter
+   : action_base< increment_counter >  {
+   static void apply(std::string const & /* m */, statsd_data & s) {
+      std::cout << "Increment counter [" << s.name << "]" << std::endl;
+      auto const g(counters.find(s.name));
+      if(g==counters.end()) {
+         counters.insert(std::make_pair(s.name, s.counter_increment));
+      } else {
+         g->second += s.counter_increment;
+      }
+   }
+};
+
 // This is simple, because currently only counters 'c' are supported.
 struct read_type_char
    : string<'c'> {};
@@ -44,7 +67,8 @@ struct read_statsd_line
           one< ':' >,
           ifapply< read_counter_increment, set_counter_increment >,
           one< '|' >,
-          read_type_char,
+          ifapply< read_type_char, set_type_char >,
+          apply< increment_counter >,
           eol> {};
 
 struct read_statsd_protocol
@@ -75,6 +99,11 @@ int main() {
          line, data);
    }
 #endif
+
+   // Dump data
+   for( auto const counter : statsd::counters ) {
+      std::cout << counter.first << ": " << counter.second << std::endl;
+   }
 
    return 0;
 }
