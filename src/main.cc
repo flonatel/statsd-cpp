@@ -49,15 +49,6 @@ struct increment_counter
       default:
          abort();
       }
-
-#if 0
-      auto const g(counters.find(s.name));
-      if(g==counters.end()) {
-         counters.insert(std::make_pair(s.name, s.counter_increment));
-      } else {
-         g->second += s.counter_increment;
-      }
-#endif
    }
 };
 
@@ -113,11 +104,6 @@ int main() {
 
    // Dump data
    data_storage.join();
-#if 0
-   for( auto const counter : statsd::counters ) {
-      std::cout << counter.first << ": " << counter.second << std::endl;
-   }
-#endif
 
    return 0;
 }
