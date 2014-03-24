@@ -19,11 +19,27 @@ public:
       }
    }
 
-   void dump(std::chrono::system_clock::time_point const
-             /* beginning_of_interval */) {
+   void dump(std::chrono::system_clock::time_point const ts_begin,
+             std::chrono::system_clock::time_point const ts_end) {
+
+      std::chrono::nanoseconds const diff(ts_end-ts_begin);
+      std::cout << "DIFF: "
+               << std::chrono::duration_cast<std::chrono::nanoseconds>(
+                  diff).count() << std::endl;
+
+      std::cout
+         << std::chrono::duration_cast<std::chrono::nanoseconds>(
+            ts_begin.time_since_epoch()).count()
+         << ":"
+         << std::chrono::duration_cast<std::chrono::nanoseconds>(
+            ts_end.time_since_epoch()).count()
+         << "{" << std::endl;
+
       for( auto const counter : m_counters ) {
          std::cout << counter.first << ": " << counter.second << std::endl;
       }
+
+      std::cout << "}" << std::endl;
    }
 
 private:
@@ -32,6 +48,10 @@ private:
 
 class raw_storage {
 public:
+
+   raw_storage()
+      : m_time_begin(std::chrono::high_resolution_clock::now()) {
+   }
 
    std::chrono::system_clock::time_point const &
    get_time_begin() const {
@@ -42,9 +62,8 @@ public:
       m_counters.increment(name, inc);
    }
 
-   void dump(std::chrono::system_clock::time_point const
-             beginning_of_interval) {
-      m_counters.dump(beginning_of_interval);
+   void dump(std::chrono::system_clock::time_point const ts_end) {
+      m_counters.dump(m_time_begin, ts_end);
    }
 
 private:
@@ -84,11 +103,11 @@ public:
 
 private:
    void dump() {
-      std::shared_ptr<raw_storage> new_storage(
+      std::shared_ptr<raw_storage> d_storage(
          std::make_shared<raw_storage>());
       // ToDo: Is this really thread safe?
-      m_current_raw_storage.swap(new_storage);
-      new_storage->dump(new_storage->get_time_begin());
+      m_current_raw_storage.swap(d_storage);
+      d_storage->dump(m_current_raw_storage->get_time_begin());
 
 #if 0
       std::chrono::system_clock::time_point now(
