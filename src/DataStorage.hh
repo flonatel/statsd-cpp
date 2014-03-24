@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include <condition_variable>
 
 namespace statsd {
 
@@ -63,7 +64,8 @@ public:
                 std::chrono::milliseconds(10000))
       : m_wait_interval(wait_interval),
         m_current_raw_storage(std::make_shared<raw_storage>()),
-        m_dump_thread(&data_storage::run, this) {
+        m_dump_thread(&data_storage::run, this),
+        m_terminate(false) {
    }
 
    void counter_increment(std::string const & name, double const inc) {
@@ -71,7 +73,12 @@ public:
    }
 
    void join() {
-      // ToDo: Signal / Join thread
+      {
+         std::unique_lock<std::mutex> lk(m_terminate_mutex);
+         m_terminate = true;
+         m_terminate_cond.notify_one();
+      }
+
       m_dump_thread.join();
    }
 
@@ -90,16 +97,30 @@ private:
    }
 
    void run() {
-//      while(true) {
-      {
-         std::this_thread::sleep_for(m_wait_interval);
+      while(true) {
+         bool should_terminate(false);
+
+         {
+            std::unique_lock<std::mutex> lk(m_terminate_mutex);
+            m_terminate_cond.wait_for(lk, m_wait_interval);
+            should_terminate = m_terminate;
+         }
+
          dump();
+
+         if(should_terminate) {
+            break;
+         }
       }
    }
 
    std::chrono::milliseconds const m_wait_interval;
    raw_storage_sp m_current_raw_storage;
    std::thread m_dump_thread;
+
+   std::mutex              m_terminate_mutex;
+   std::condition_variable m_terminate_cond;
+   bool                    m_terminate;
 };
 
 }
