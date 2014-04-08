@@ -22,5 +22,6 @@ CLEANFILES =
 TESTS = 
 
 # Generics
+include contrib/MakefileGTest.inc
 include build/MakefileBlackbox.inc
 include src/Makefile.inc
