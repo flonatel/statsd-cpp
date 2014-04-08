@@ -1,0 +1,44 @@
+
+* Introduction
+  For statsd communication there is the need to pass large amount of
+  data to other statsd parts.
+
+* Requirements
+** Large amount of data
+** Very fast serialization
+** Very fast de-serialization
+** Must support programing languages: C++ and python
+   (Parts of statsd - especially the client library - 
+    will be written in other programming languages)
+** Should support programming languages: Java
+** Easy to use
+** Serialization must be able to write to a fd and file
+** De-serialization must be able to read from a fd and a file.
+** Fitting License (first choice BSD new)
+
+
+* Decision
+It was decided to choose capnproto [1].
+It looks that it fulfills the requirements.
+
+* Evaluated
+  Here is a list of possible serialization frameworks which were
+  excluded.  The reason(s) why they were excluded are also given.
+
+** Google Proto Buffers
+   - Cannot read / write to fd
+   - Does not support streaming
+
+** Apache Avro
+   + Can read / write to C++ stream.
+   - Cannot read / write to fd.
+     Therefore additional effort is needed to handle fds.
+   - Very strange old examples using auto_ptr.
+
+** Apache Thrift
+   - Higher level (service)
+
+
+* References
+
+[1] http://kentonv.github.io/capnproto/index.html

@@ -1,0 +1,1 @@
+for (( i=0; i<100; i+=1 )) do echo "h:345|c"; sleep 0.2; done | ./bin/statsd
