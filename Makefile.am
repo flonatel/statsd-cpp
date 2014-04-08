@@ -26,5 +26,8 @@ include contrib/MakefileGTest.inc
 include build/MakefileBlackbox.inc
 include src/Makefile.inc
 
+# Librariy
+include lib/statsdcpp/Makefile.inc
+
 # Unittests
-include lib/cpp/unittests/Makefile.inc
+include lib/statsdcpp/unittests/Makefile.inc

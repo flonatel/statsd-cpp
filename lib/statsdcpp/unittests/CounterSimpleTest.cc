@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
-#include <statsd/counter.hh>
+#include <statsdcpp/counter.hh>
 
 class CounterSimple : public ::testing::Test {
 };
 
 TEST_F(CounterSimple, test_one_counter) {
-   statsd::counter cnt("org.flonatel.statsd.test.cnt1");
+   statsdcpp::counter cnt("org.flonatel.statsd.test.cnt1");
    ++cnt;
    // Because it is not possible to read counters, there
    // is no simple way of checking for the right result.

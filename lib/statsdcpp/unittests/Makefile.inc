@@ -3,10 +3,16 @@ noinst_PROGRAMS += tests/unit/CounterSimpleTest
 TESTS += tests/unit/CounterSimpleTest
 
 tests_unit_CounterSimpleTest_SOURCES = \
-        lib/cpp/unittests/CounterSimpleTest.cc
+        lib/statsdcpp/unittests/CounterSimpleTest.cc
 
 tests_unit_CounterSimpleTest_CPPFLAGS = \
-        -Ilib
+        -I$(top_srcdir)/${GOOGLE_TEST_INCLUDE} \
+        -I$(top_srcdir)/lib
 
 tests_unit_CounterSimpleTest_LDADD = \
-        lib/libstatsd++.la
+        lib/libstatsdcpp.la \
+	contrib/gtest/lib/libgtest.la
+
+# Local Variables:
+# mode: makefile
+# End:
