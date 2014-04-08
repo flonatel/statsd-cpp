@@ -3,19 +3,25 @@
 
 #include <string>
 #include <atomic>
+#include <memory>
 
 namespace statsdcpp {
 
+class collector;
+
 class counter {
 public:
-   counter(std::string const & name);
+   void inc() { ++_cnt; }
 
-   void operator++() { ++_cnt; }
+   counter() = delete;
+   counter(std::string const & name);
 
 private:
    std::string const _name;
    std::atomic_uint_fast64_t _cnt;
 };
+
+using counter_sp = std::shared_ptr<counter>;
 
 }
 
