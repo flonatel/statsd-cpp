@@ -25,3 +25,6 @@ TESTS =
 include contrib/MakefileGTest.inc
 include build/MakefileBlackbox.inc
 include src/Makefile.inc
+
+# Unittests
+include lib/cpp/unittests/Makefile.inc
