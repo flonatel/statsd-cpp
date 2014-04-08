@@ -12,4 +12,5 @@ script:
   - build/init_autotools.sh
   - CC=gcc-4.8 CXX=g++-4.8 ./configure 
   - make 
-  - make bbtests
+  - make check
+
