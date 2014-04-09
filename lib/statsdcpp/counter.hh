@@ -7,14 +7,15 @@
 
 namespace statsdcpp {
 
-class collector;
-
 class counter {
 public:
    void inc() { ++_cnt; }
 
    counter() = delete;
    counter(std::string const & name);
+
+   std::string const & name() const { return _name; }
+   uint64_t get_and_reset() { return _cnt.exchange(0); }
 
 private:
    std::string const _name;
