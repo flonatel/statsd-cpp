@@ -3,27 +3,21 @@
 
 #include <chrono>
 #include <sstream>
+#include <statsdcpp/counter.hh>
 
 namespace statsdcpp { namespace serializer {
 
-template< typename TWriter >
 class debug {
 public:
-   debug(TWriter & writer);
-
-   void bulk_info(
-      std::chrono::system_clock::time_point begin,
-      std::chrono::system_clock::time_point end,
-      uint64_t counter_cnt);
-
-   void counter(std::string const & name,
-                uint64_t const cnt);
-
-private:
-   TWriter & _writer;
+   template< typename TWriter >
+   static void write(TWriter & writer,
+                     statsdcpp::counter const & counter) {
+      counter.serialize_debug(writer);
+   }
 };
 
 // *** Implementation
+#if 0
 
 template< typename TWriter >
 debug< TWriter >::debug(TWriter & writer)
@@ -36,7 +30,6 @@ void debug< TWriter >::bulk_info(
    std::chrono::system_clock::time_point /* ts_end */,
    uint64_t /* counter_cnt */) {
 
-#if 0
    std::ostringstream ostr;
 
    // Timepoint does not matter for debug output
@@ -49,9 +42,10 @@ void debug< TWriter >::bulk_info(
         << "CounterCnt:" << counter_cnt << std::endl;
 
    _writer.write(ostr.str().c_str(), ostr.str().size());
-#endif
 }
+#endif
 
+#if 0
 template< typename TWriter >
 void debug< TWriter >::counter(std::string const & name,
                                uint64_t const cnt) {
@@ -59,6 +53,7 @@ void debug< TWriter >::counter(std::string const & name,
    ostr << "Counter:" << name << ":" << cnt << std::endl;
    _writer.write(ostr.str().c_str(), ostr.str().size());
 }
+#endif
 
 }}
 

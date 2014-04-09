@@ -1,22 +1,19 @@
 #include <gtest/gtest.h>
 #include <statsdcpp/counter.hh>
 #include <statsdcpp/collector.hh>
-#include <statsdcpp/serializer/debug.hh>
 #include <statsdcpp/output/string.hh>
+#include <statsdcpp/serializer/debug.hh>
 
 class CounterSimple : public ::testing::Test {
 public:
    CounterSimple()
-      : debug_serializer(string_writer),
-        collector(debug_serializer) {
+      : collector(string_writer) {
    }
 
    statsdcpp::output::string string_writer;
-   statsdcpp::serializer::debug<statsdcpp::output::string>
-   debug_serializer;
-   statsdcpp::collector< statsdcpp::serializer::debug<
-                            statsdcpp::output::string> >
-      collector;
+   statsdcpp::serializer::debug debug_serializer;
+   statsdcpp::collector< statsdcpp::serializer::debug,
+                         statsdcpp::output::string > collector;
 };
 
 TEST_F(CounterSimple, test_one_counter) {

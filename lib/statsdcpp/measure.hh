@@ -35,6 +35,9 @@ public:
    TQuantity max() const { return _max; }
    TQuantity min() const { return _min; }
 
+   template< typename TWriter >
+   void serialize_debug(TWriter & writer);
+
 private:
    std::string const _name;
 

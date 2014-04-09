@@ -10,47 +10,48 @@ namespace statsdcpp {
 // The Collector class collects all the data of the different
 // types and send them out each interval.
 
-template< typename TSerializer >
+template< typename TSerializer, typename TWriter >
 class collector {
 public:
-   collector(TSerializer & serializer);
+   collector(TWriter & writer);
 
    counter_sp generate_counter(std::string const & name);
 
-   // Force flushing all counters to the serializer
+   // Force flushing all counters to the writer
    void flush();
 
 private:
-   TSerializer & _serializer;
+   TWriter & _writer;
    std::chrono::system_clock::time_point _begin_ts;
    std::list<counter_sp> _counters;
 };
 
 // *** Implementation
 
-template< typename TSerializer>
-collector< TSerializer >::collector(TSerializer & serializer)
-: _serializer(serializer),
+template< typename TSerializer, typename TWriter>
+collector< TSerializer, TWriter >::collector(TWriter & writer)
+: _writer(writer),
   _begin_ts(std::chrono::high_resolution_clock::now()) {
 }
 
-template< typename TSerializer>
-counter_sp collector< TSerializer >::generate_counter(
+template< typename TSerializer, typename TWriter>
+counter_sp collector< TSerializer, TWriter >::generate_counter(
    std::string const & name) {
    counter_sp cntr(std::make_shared<counter>(name));
    _counters.push_back(cntr);
    return cntr;
 }
 
-template< typename TSerializer>
-void collector< TSerializer >::flush() {
+template< typename TSerializer, typename TWriter>
+void collector< TSerializer, TWriter >::flush() {
    std::chrono::system_clock::time_point const end_ts(
       std::chrono::high_resolution_clock::now());
 
-   _serializer.bulk_info(_begin_ts, end_ts, _counters.size());
+//   TSerializer::begin(_writer, *this);
    for(auto const & cnt_it : _counters) {
-      _serializer.counter(cnt_it->name(), cnt_it->get_and_reset());
+      TSerializer::write(_writer, *(cnt_it.get()));
    }
+//   TSerializer::end(_writer, *this);
 }
 
 }
