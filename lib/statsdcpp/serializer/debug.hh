@@ -19,9 +19,15 @@ public:
    static void begin(
       TWriter & writer,
       statsdcpp::collector<TSerializer, TWriter> const & clcrt) {
-      clcrt.serialize_begin_debug(writer);
+      clcrt.serialize_debug_begin(writer);
    }
 
+   template< typename TSerializer, typename TWriter >
+   static void end(
+      TWriter & writer,
+      statsdcpp::collector<TSerializer, TWriter> const & clcrt) {
+      clcrt.serialize_debug_end(writer);
+   }
 
 };
 

@@ -20,6 +20,9 @@ public:
    // Force flushing all counters to the writer
    void flush();
 
+   void serialize_debug_begin(TWriter & writer) const;
+   void serialize_debug_end(TWriter & writer) const;
+
 private:
    TWriter & _writer;
    std::chrono::system_clock::time_point _begin_ts;
@@ -43,6 +46,18 @@ counter_sp collector< TSerializer, TWriter >::generate_counter(
 }
 
 template< typename TSerializer, typename TWriter>
+void collector< TSerializer, TWriter >::serialize_debug_begin(
+   TWriter & /* writer */) const {
+   // Nothing is written in case of debug.
+}
+
+template< typename TSerializer, typename TWriter>
+void collector< TSerializer, TWriter >::serialize_debug_end(
+   TWriter & /* writer */) const {
+   // Nothing is written in case of debug.
+}
+
+template< typename TSerializer, typename TWriter>
 void collector< TSerializer, TWriter >::flush() {
    std::chrono::system_clock::time_point const end_ts(
       std::chrono::high_resolution_clock::now());
@@ -51,7 +66,7 @@ void collector< TSerializer, TWriter >::flush() {
    for(auto const & cnt_it : _counters) {
       TSerializer::write(_writer, *(cnt_it.get()));
    }
-//   TSerializer::end(_writer, *this);
+   TSerializer::end(_writer, *this);
 }
 
 }
