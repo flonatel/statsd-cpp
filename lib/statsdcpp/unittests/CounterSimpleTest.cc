@@ -45,6 +45,18 @@ TEST_F(CounterSimple, test_two_counter) {
              string_writer.str());
 }
 
+TEST_F(CounterSimple, test_one_counter_inc77twice) {
+   statsdcpp::counter_sp cnt(
+      collector.generate_counter("org.flonatel.statsd.test.cnt1"));
+   cnt->inc(77);
+   cnt->inc(77);
+
+   collector.flush();
+
+   ASSERT_EQ("Counter:org.flonatel.statsd.test.cnt1:154\n",
+             string_writer.str());
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

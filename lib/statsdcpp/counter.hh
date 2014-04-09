@@ -10,6 +10,7 @@ namespace statsdcpp {
 class counter {
 public:
    void inc() { ++_cnt; }
+   void inc(uint64_t const n) { _cnt+=n; }
 
    counter() = delete;
    counter(std::string const & name);
