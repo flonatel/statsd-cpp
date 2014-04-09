@@ -14,6 +14,15 @@ public:
                      statsdcpp::counter const & counter) {
       counter.serialize_debug(writer);
    }
+
+   template< typename TSerializer, typename TWriter >
+   static void begin(
+      TWriter & writer,
+      statsdcpp::collector<TSerializer, TWriter> const & clcrt) {
+      clcrt.serialize_begin_debug(writer);
+   }
+
+
 };
 
 // *** Implementation

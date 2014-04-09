@@ -47,7 +47,7 @@ void collector< TSerializer, TWriter >::flush() {
    std::chrono::system_clock::time_point const end_ts(
       std::chrono::high_resolution_clock::now());
 
-//   TSerializer::begin(_writer, *this);
+   TSerializer::begin(_writer, *this);
    for(auto const & cnt_it : _counters) {
       TSerializer::write(_writer, *(cnt_it.get()));
    }
