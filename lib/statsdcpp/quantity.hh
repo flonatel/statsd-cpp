@@ -27,12 +27,33 @@ private:
 
 template<int M1, int L1, int T1,
          int M2, int L2, int T2>
-quantity<M1+M2, L1+L2, T1+T2> operator*(
+constexpr quantity<M1+M2, L1+L2, T1+T2> operator*(
    quantity<M1, L1, T1> const & l, quantity<M2, L2, T2> const & r) {
    return quantity<M1+M2, L1+L2, T1+T2>(l.value()*r.value());
 }
 
+
+template <int M1, int L1, int T1,
+          int M2, int L2, int T2>
+constexpr quantity<M1-M2, L1-L2, T1-T2> operator/(
+   quantity<M1, L1, T1> const & l,
+   quantity<M2, L2, T2> const & r) {
+   return quantity<M1-M2, L1-L2, T1-T2>(l.value()/r.value());
+}
+
+template <int M, int L, int T>
+constexpr bool operator==(
+   quantity<M, L, T> const & l, quantity<M, L, T> const & r) {
+   return (l.value()==r.value());
+}
+template <int M, int L, int T>
+constexpr bool operator<(quantity<M, L, T> const & l,
+                         quantity<M, L, T> const & r) {
+   return l.value()<r.value();
+}
+
 template<int M, int L, int T>
+constexpr
 quantity<M, L, T> operator+(quantity<M, L, T> const & l,
                             quantity<M, L, T> const & r) {
    return quantity<M, L, T>(l)+=r;
@@ -55,6 +76,12 @@ using pressure = quantity<1,-1,-2>;
 
 constexpr factor percent(0.01);
 constexpr length meter(1.0);
+
+constexpr factor operator"" _percent(long double x) {
+   return number(x) * percent; }
+
+constexpr time operator"" _ms(long double x) {
+   return time(x) / number(1000); }
 
 }
 

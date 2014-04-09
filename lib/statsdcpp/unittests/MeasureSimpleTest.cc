@@ -5,24 +5,32 @@ class MeasureSimple : public ::testing::Test {
 public:
 };
 
-TEST_F(MeasureSimple, test_basic_quantitiy) {
-
+TEST_F(MeasureSimple, test_basic_computation) {
    using namespace statsdcpp::siunits;
 
-   length const l1;
-   length const l2(l1 + factor(2.0) * meter);
+   statsdcpp::measure<statsdcpp::siunits::time> time_measure(
+      "org.flonatel.statsd.test.msur1");
 
-   ASSERT_EQ(l2.value(), 2.0);
-}
+   time_measure.add(20.0_ms);
 
-TEST_F(MeasureSimple, test_percent) {
+   ASSERT_EQ(1, time_measure.count_values());
+   ASSERT_EQ(20.0_ms, time_measure.average());
+   ASSERT_EQ(20.0_ms, time_measure.max());
+   ASSERT_EQ(20.0_ms, time_measure.min());
 
-   using namespace statsdcpp::siunits;
+   time_measure.add(40.0_ms);
 
-   number const n1(200.0);
-   number const n2(n1 * (number(10.0) * percent));
+   ASSERT_EQ(2, time_measure.count_values());
+   ASSERT_EQ(30.0_ms, time_measure.average());
+   ASSERT_EQ(40.0_ms, time_measure.max());
+   ASSERT_EQ(20.0_ms, time_measure.min());
 
-   ASSERT_EQ(n2.value(), 20.0);
+   time_measure.add(30.0_ms);
+
+   ASSERT_EQ(3, time_measure.count_values());
+   ASSERT_EQ(30.0_ms, time_measure.average());
+   ASSERT_EQ(40.0_ms, time_measure.max());
+   ASSERT_EQ(20.0_ms, time_measure.min());
 }
 
 int main(int argc, char **argv) {
