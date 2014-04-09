@@ -4,7 +4,6 @@
 #include <list>
 #include <chrono>
 #include <statsdcpp/counter.hh>
-#include <statsdcpp/counter.hh>
 
 namespace statsdcpp {
 
