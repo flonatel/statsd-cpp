@@ -1,5 +1,5 @@
-#ifndef STATSD_CPP_SERIALIZER_DEBUG_HH
-#define STATSD_CPP_SERIALIZER_DEBUG_HH
+#ifndef STATSD_CPP_SERIALIZER_CARBON_HH
+#define STATSD_CPP_SERIALIZER_CARBON_HH
 
 #include <chrono>
 #include <sstream>
@@ -7,7 +7,7 @@
 
 namespace statsdcpp { namespace serializer {
 
-class debug {
+class carbon {
 public:
    template< typename TWriter >
    static void write(
@@ -15,7 +15,7 @@ public:
       std::chrono::system_clock::time_point const & begin_ts,
       std::chrono::system_clock::time_point const & end_ts,
       statsdcpp::counter const & counter) {
-      counter.serialize_debug(writer, begin_ts, end_ts);
+      counter.serialize_carbon(writer, begin_ts, end_ts);
    }
 
    template< typename TSerializer, typename TWriter >
