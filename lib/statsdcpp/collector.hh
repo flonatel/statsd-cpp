@@ -4,6 +4,7 @@
 #include <list>
 #include <chrono>
 #include <statsdcpp/counter.hh>
+#include <statsdcpp/measure.hh>
 
 namespace statsdcpp {
 
@@ -16,6 +17,9 @@ public:
    collector(TWriter & writer);
 
    counter_sp generate_counter(std::string const & name);
+   template< typename TQuantity >
+   measure_sp< TQuantity, TWriter >
+   generate_measure(std::string const & name);
 
    // Force flushing all counters to the writer
    void flush();
@@ -27,6 +31,7 @@ private:
    TWriter & _writer;
    std::chrono::system_clock::time_point _begin_ts;
    std::list<counter_sp> _counters;
+   std::list< base_sp< TWriter > > _measures;
 };
 
 // *** Implementation
@@ -43,6 +48,17 @@ counter_sp collector< TSerializer, TWriter >::generate_counter(
    counter_sp cntr(std::make_shared<counter>(name));
    _counters.push_back(cntr);
    return cntr;
+}
+
+template< typename TSerializer, typename TWriter>
+template< typename TQuantity >
+measure_sp< TQuantity, TWriter >
+collector< TSerializer, TWriter >::generate_measure(
+   std::string const & name) {
+   measure_sp< TQuantity, TWriter > no(
+      std::make_shared< measure< TQuantity, TWriter > >(name));
+   _measures.push_back(no);
+   return no;
 }
 
 template< typename TSerializer, typename TWriter>
@@ -65,6 +81,9 @@ void collector< TSerializer, TWriter >::flush() {
    TSerializer::begin(_writer, *this);
    for(auto const & cnt_it : _counters) {
       TSerializer::write(_writer, _begin_ts, end_ts, *(cnt_it.get()));
+   }
+   for(auto const & msrs_it : _measures) {
+      TSerializer::write(_writer, _begin_ts, end_ts, msrs_it.get());
    }
    TSerializer::end(_writer, *this);
    _begin_ts = end_ts;

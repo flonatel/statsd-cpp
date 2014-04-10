@@ -14,6 +14,15 @@ public:
       TWriter & writer,
       std::chrono::system_clock::time_point const & begin_ts,
       std::chrono::system_clock::time_point const & end_ts,
+      statsdcpp::base< TWriter> const * base) {
+      base->serialize_debug(writer, begin_ts, end_ts);
+   }
+
+   template< typename TWriter >
+   static void write(
+      TWriter & writer,
+      std::chrono::system_clock::time_point const & begin_ts,
+      std::chrono::system_clock::time_point const & end_ts,
       statsdcpp::counter const & counter) {
       counter.serialize_debug(writer, begin_ts, end_ts);
    }

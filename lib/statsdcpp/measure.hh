@@ -1,14 +1,16 @@
 #ifndef STATSD_CPP_MEASURE_HH
 #define STATSD_CPP_MEASURE_HH
 
+#include <memory>
 #include <statsdcpp/quantity.hh>
+#include <statsdcpp/base.hh>
 
 namespace statsdcpp {
 
 // This is a generalization of the original statsd timer and gauge.
 // It has the funtionality of timer but for arbritrary measurements.
-template< typename TQuantity >
-class measure {
+template< typename TQuantity, typename TWriter >
+class measure : public base< TWriter > {
 public:
    measure(std::string const & name)
       : _name(name),
@@ -35,8 +37,10 @@ public:
    TQuantity max() const { return _max; }
    TQuantity min() const { return _min; }
 
-   template< typename TWriter >
-   void serialize_debug(TWriter & writer);
+   virtual void serialize_debug(
+      TWriter & writer,
+      std::chrono::system_clock::time_point const & begin_ts,
+      std::chrono::system_clock::time_point const & end_ts) const;
 
 private:
    std::string const _name;
@@ -46,6 +50,21 @@ private:
    TQuantity _sum_val;
    uint64_t  _cnt_val;
 };
+
+template< typename TQuantity, typename TWriter >
+using measure_sp = std::shared_ptr< measure< TQuantity, TWriter > >;
+
+
+template< typename TQuantity, typename TWriter >
+void measure< TQuantity, TWriter >::serialize_debug(
+   TWriter & writer,
+   std::chrono::system_clock::time_point const & /* begin_ts */,
+   std::chrono::system_clock::time_point const & /* end_ts */) const {
+   std::ostringstream ostr;
+   ostr << "Measure:" << _name << ":" << _min.value() << ":" << _max.value()
+        << ":" << average().value() << ":" << _cnt_val << std::endl;
+   writer.write(ostr.str().c_str(), ostr.str().size());
+}
 
 }
 
