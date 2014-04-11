@@ -62,16 +62,24 @@ void counter< TWriter >::serialize_carbon(TWriter & writer) {
       timeutils::interval_middle(this->_begin_ts, end_ts));
    std::chrono::nanoseconds const diff(end_ts - this->_begin_ts);
 
+   uint64_t const cnt(get_and_reset());
+
    double const cnt_per_nsec(
-      static_cast<double>(get_and_reset())
+      static_cast<double>(cnt)
       / std::chrono::duration_cast<std::chrono::nanoseconds>(
          diff).count());
    double const cnt_per_sec(cnt_per_nsec * 1000000000);
 
+   auto const midt(std::chrono::duration_cast<std::chrono::seconds>(
+                      mid.time_since_epoch()).count());
+
    std::ostringstream ostr;
-   ostr << this->_name << " " << cnt_per_sec << " "
-        << std::chrono::duration_cast<std::chrono::seconds>(
-           mid.time_since_epoch()).count() << std::endl;
+   ostr << this->_name << ".persec " << cnt_per_sec << " " << midt << std::endl
+        << this->_name << ".absolut " << cnt << " " << midt << std::endl
+        << this->_name << ".interval "
+        << std::chrono::duration_cast<std::chrono::nanoseconds>(
+           diff).count() << " " << midt << std::endl;
+
    writer.write(ostr.str().c_str(), ostr.str().size());
    this->_begin_ts = end_ts;
 }

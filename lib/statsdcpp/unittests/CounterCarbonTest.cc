@@ -48,13 +48,37 @@ TEST_F(CarbonSimple, test_one_counter_inc77twice) {
 
    collector.flush();
 
-   std::vector<std::string> const lvec(split(string_writer.str(), ' '));
-   ASSERT_EQ(3, lvec.size());
-   ASSERT_EQ(lvec[0], "org.flonatel.statsd.test.cnt1");
+   std::vector<std::string> const lines(split(string_writer.str(), '\n'));
+   ASSERT_EQ(3, lines.size());
 
-   // Some rough heuristics.
-   ASSERT_NEAR(550000, stod(lvec[1]), 450000);
-   ASSERT_NEAR(time(0), stod(lvec[2]), 10);
+   {
+      // Check first line
+      std::vector<std::string> const lvec(split(lines[0], ' '));
+      ASSERT_EQ(3, lvec.size());
+      ASSERT_EQ(lvec[0], "org.flonatel.statsd.test.cnt1.persec");
+      // Some rough heuristics.
+      ASSERT_NEAR(550000, stod(lvec[1]), 450000);
+      ASSERT_NEAR(time(0), stod(lvec[2]), 10);
+   }
+
+   {
+      // Check second line
+      std::vector<std::string> const lvec(split(lines[1], ' '));
+      ASSERT_EQ(3, lvec.size());
+      ASSERT_EQ(lvec[0], "org.flonatel.statsd.test.cnt1.absolut");
+      ASSERT_EQ(154, stod(lvec[1]));
+      ASSERT_NEAR(time(0), stod(lvec[2]), 10);
+   }
+
+   {
+      // Check third line
+      std::vector<std::string> const lvec(split(lines[2], ' '));
+      ASSERT_EQ(3, lvec.size());
+      ASSERT_EQ(lvec[0], "org.flonatel.statsd.test.cnt1.interval");
+      ASSERT_NEAR(180000, stod(lvec[1]), 100000);
+      ASSERT_NEAR(time(0), stod(lvec[2]), 10);
+   }
+
 }
 
 TEST_F(CarbonSimple, test_one_measure) {
