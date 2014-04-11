@@ -26,29 +26,12 @@ TEST_F(MeasureSimple, test_basic_computation) {
             "org.flonatel.statsd.test.msur1"));
 
    time_measure->add(20.0_ms);
-
-   ASSERT_EQ(1, time_measure->count_values());
-   ASSERT_EQ(20.0_ms, time_measure->average());
-   ASSERT_EQ(20.0_ms, time_measure->max());
-   ASSERT_EQ(20.0_ms, time_measure->min());
-
    time_measure->add(40.0_ms);
-
-   ASSERT_EQ(2, time_measure->count_values());
-   ASSERT_EQ(30.0_ms, time_measure->average());
-   ASSERT_EQ(40.0_ms, time_measure->max());
-   ASSERT_EQ(20.0_ms, time_measure->min());
-
    time_measure->add(30.0_ms);
-
-   ASSERT_EQ(3, time_measure->count_values());
-   ASSERT_EQ(30.0_ms, time_measure->average());
-   ASSERT_EQ(40.0_ms, time_measure->max());
-   ASSERT_EQ(20.0_ms, time_measure->min());
 
    collector.flush();
 
-   ASSERT_EQ("Counter:org.flonatel.statsd.test.cnt1:1\n",
+   ASSERT_EQ("Measure:org.flonatel.statsd.test.msur1:0.02:0.04:0.03:3\n",
              string_writer.str());
 }
 

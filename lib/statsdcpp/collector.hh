@@ -16,38 +16,34 @@ class collector {
 public:
    collector(TWriter & writer);
 
-   counter_sp generate_counter(std::string const & name);
-   template< typename TQuantity >
-   measure_sp< TQuantity, TWriter >
-   generate_measure(std::string const & name);
+   counter_sp< TWriter > generate_counter(std::string const & name);
+   template< typename TQuantity > measure_sp< TQuantity, TWriter >
+      generate_measure(std::string const & name);
 
    // Force flushing all counters to the writer
    void flush();
 
-   void serialize_debug_begin(TWriter & writer) const;
-   void serialize_debug_end(TWriter & writer) const;
-
 private:
    TWriter & _writer;
-   std::chrono::system_clock::time_point _begin_ts;
-   std::list<counter_sp> _counters;
-   std::list< base_sp< TWriter > > _measures;
+   std::list< base_sp< TWriter > > _measurables;
 };
 
 // *** Implementation
 
 template< typename TSerializer, typename TWriter>
 collector< TSerializer, TWriter >::collector(TWriter & writer)
-: _writer(writer),
-  _begin_ts(std::chrono::high_resolution_clock::now()) {
+: _writer(writer) {
 }
 
+
 template< typename TSerializer, typename TWriter>
-counter_sp collector< TSerializer, TWriter >::generate_counter(
+counter_sp< TWriter >
+collector< TSerializer, TWriter >::generate_counter(
    std::string const & name) {
-   counter_sp cntr(std::make_shared<counter>(name));
-   _counters.push_back(cntr);
-   return cntr;
+   counter_sp< TWriter > nobj(
+      std::make_shared< counter< TWriter > >(name));
+   _measurables.push_back(nobj);
+   return nobj;
 }
 
 template< typename TSerializer, typename TWriter>
@@ -55,22 +51,10 @@ template< typename TQuantity >
 measure_sp< TQuantity, TWriter >
 collector< TSerializer, TWriter >::generate_measure(
    std::string const & name) {
-   measure_sp< TQuantity, TWriter > no(
+   measure_sp< TQuantity, TWriter > nobj(
       std::make_shared< measure< TQuantity, TWriter > >(name));
-   _measures.push_back(no);
-   return no;
-}
-
-template< typename TSerializer, typename TWriter>
-void collector< TSerializer, TWriter >::serialize_debug_begin(
-   TWriter & /* writer */) const {
-   // Nothing is written in case of debug.
-}
-
-template< typename TSerializer, typename TWriter>
-void collector< TSerializer, TWriter >::serialize_debug_end(
-   TWriter & /* writer */) const {
-   // Nothing is written in case of debug.
+   _measurables.push_back(nobj);
+   return nobj;
 }
 
 template< typename TSerializer, typename TWriter>
@@ -78,15 +62,9 @@ void collector< TSerializer, TWriter >::flush() {
    std::chrono::system_clock::time_point const end_ts(
       std::chrono::high_resolution_clock::now());
 
-   TSerializer::begin(_writer, *this);
-   for(auto const & cnt_it : _counters) {
-      TSerializer::write(_writer, _begin_ts, end_ts, *(cnt_it.get()));
+   for(auto & msrs_it : _measurables) {
+      TSerializer::write(_writer, msrs_it.get());
    }
-   for(auto const & msrs_it : _measures) {
-      TSerializer::write(_writer, _begin_ts, end_ts, msrs_it.get());
-   }
-   TSerializer::end(_writer, *this);
-   _begin_ts = end_ts;
 }
 
 }

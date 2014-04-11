@@ -17,7 +17,7 @@ public:
 };
 
 TEST_F(CounterSimple, test_one_counter) {
-   statsdcpp::counter_sp cnt(
+   statsdcpp::counter_sp<statsdcpp::output::string> cnt(
       collector.generate_counter("org.flonatel.statsd.test.cnt1"));
    cnt->inc();
 
@@ -28,10 +28,10 @@ TEST_F(CounterSimple, test_one_counter) {
 }
 
 TEST_F(CounterSimple, test_two_counter) {
-   statsdcpp::counter_sp cnt1(
+   statsdcpp::counter_sp<statsdcpp::output::string> cnt1(
       collector.generate_counter("org.flonatel.statsd.test.cnt1"));
    cnt1->inc();
-   statsdcpp::counter_sp cnt2(
+   statsdcpp::counter_sp<statsdcpp::output::string> cnt2(
       collector.generate_counter("org.flonatel.statsd.test.cnt2"));
    cnt2->inc();
 
@@ -43,7 +43,7 @@ TEST_F(CounterSimple, test_two_counter) {
 }
 
 TEST_F(CounterSimple, test_one_counter_inc77twice) {
-   statsdcpp::counter_sp cnt(
+   statsdcpp::counter_sp<statsdcpp::output::string> cnt(
       collector.generate_counter("org.flonatel.statsd.test.cnt1"));
    cnt->inc(77);
    cnt->inc(77);

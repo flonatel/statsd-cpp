@@ -2,8 +2,10 @@
 #define STATSD_CPP_MEASURE_HH
 
 #include <memory>
+#include <mutex>
 #include <statsdcpp/quantity.hh>
 #include <statsdcpp/base.hh>
+#include <statsdcpp/timeutils.hh>
 
 namespace statsdcpp {
 
@@ -13,12 +15,13 @@ template< typename TQuantity, typename TWriter >
 class measure : public base< TWriter > {
 public:
    measure(std::string const & name)
-      : _name(name),
+      : base< TWriter >(name),
         _sum_val(0),
         _cnt_val(0) {
    }
 
    void add(TQuantity const & v) {
+      std::lock_guard< std::mutex > lock(_data_mutex);
       if(_cnt_val==0) {
          _min = v;
          _max = v;
@@ -31,19 +34,17 @@ public:
       _sum_val+=v;
    }
 
-   uint64_t count_values() const { return _cnt_val; }
-   TQuantity average() const {
-      return _sum_val / statsdcpp::siunits::number(_cnt_val); }
-   TQuantity max() const { return _max; }
-   TQuantity min() const { return _min; }
 
-   virtual void serialize_debug(
-      TWriter & writer,
-      std::chrono::system_clock::time_point const & begin_ts,
-      std::chrono::system_clock::time_point const & end_ts) const;
+   virtual void serialize_debug(TWriter & writer);
+   virtual void serialize_carbon(TWriter & writer);
 
 private:
-   std::string const _name;
+   TQuantity average_locked() const {
+      return _sum_val / statsdcpp::siunits::number(_cnt_val); }
+
+   // A mutex is needed because the computation of the different
+   // fields cannot be done atomic.
+   std::mutex _data_mutex;
 
    TQuantity _min;
    TQuantity _max;
@@ -56,14 +57,37 @@ using measure_sp = std::shared_ptr< measure< TQuantity, TWriter > >;
 
 
 template< typename TQuantity, typename TWriter >
-void measure< TQuantity, TWriter >::serialize_debug(
-   TWriter & writer,
-   std::chrono::system_clock::time_point const & /* begin_ts */,
-   std::chrono::system_clock::time_point const & /* end_ts */) const {
+void measure< TQuantity, TWriter >::serialize_debug(TWriter & writer) {
+   std::lock_guard< std::mutex > lock(_data_mutex);
    std::ostringstream ostr;
-   ostr << "Measure:" << _name << ":" << _min.value() << ":" << _max.value()
-        << ":" << average().value() << ":" << _cnt_val << std::endl;
+   ostr << "Measure:" << this->_name << ":" << _min.value()
+        << ":" << _max.value()
+        << ":" << average_locked().value() << ":" << _cnt_val << std::endl;
    writer.write(ostr.str().c_str(), ostr.str().size());
+}
+
+template< typename TQuantity, typename TWriter >
+void measure< TQuantity, TWriter >::serialize_carbon(TWriter & writer) {
+   std::lock_guard< std::mutex > lock(_data_mutex);
+   std::chrono::system_clock::time_point const end_ts(
+      std::chrono::high_resolution_clock::now());
+   std::chrono::system_clock::time_point const mid(
+      timeutils::interval_middle(this->_begin_ts, end_ts));
+
+   auto const now(std::chrono::duration_cast<std::chrono::seconds>(
+                     mid.time_since_epoch()).count());
+
+   std::ostringstream ostr;
+   ostr << this->_name << ".min " << _min.value() << " " << now << std::endl
+        << this->_name << ".max " << _max.value() << " " << now << std::endl
+        << this->_name << ".average " << average_locked().value() << " " << now
+        << std::endl;
+   writer.write(ostr.str().c_str(), ostr.str().size());
+
+   // And reset
+   _sum_val = TQuantity(0);
+   _cnt_val = 0;
+   this->_begin_ts = end_ts;
 }
 
 }

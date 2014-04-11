@@ -7,10 +7,21 @@
 #include <memory>
 #include <sstream>
 #include <iostream>
+#include <statsdcpp/base.hh>
+#include <statsdcpp/timeutils.hh>
 
 namespace statsdcpp {
 
-class counter {
+/*
+ * counter
+ * This is a simple counter implementation.
+ * It is optimized for speed: the inc() are atomic operations.
+ * inc() is thread-safe.
+ * The caller has to ensure that at maximum one of the serialize_ methods
+ * is called at the same point of time.
+ */
+template< typename TWriter >
+class counter : public base< TWriter > {
 public:
    void inc() { ++_cnt; }
    void inc(uint64_t const n) { _cnt+=n; }
@@ -18,61 +29,51 @@ public:
    counter() = delete;
    counter(std::string const & name);
 
-   std::string const & name() const { return _name; }
-   uint64_t get_and_reset() { return _cnt.exchange(0); }
-
-   template< typename TWriter >
-   void serialize_debug(
-      TWriter & writer,
-      std::chrono::system_clock::time_point const & begin_ts,
-      std::chrono::system_clock::time_point const & end_ts) const;
-
-   template< typename TWriter >
-   void serialize_carbon(
-      TWriter & writer,
-      std::chrono::system_clock::time_point const & begin_ts,
-      std::chrono::system_clock::time_point const & end_ts) const;
+   void serialize_debug(TWriter & writer);
+   void serialize_carbon(TWriter & writer);
 
 private:
-   std::string const _name;
+   uint64_t get_and_reset() { return _cnt.exchange(0); }
+
    std::atomic_uint_fast64_t _cnt;
 };
 
-using counter_sp = std::shared_ptr<counter>;
-
+template< typename TWriter >
+using counter_sp = std::shared_ptr< counter< TWriter > >;
 
 template< typename TWriter >
-void counter::serialize_debug(
-   TWriter & writer,
-   std::chrono::system_clock::time_point const & /* begin_ts */,
-   std::chrono::system_clock::time_point const & /* end_ts */) const {
+counter< TWriter >::counter(std::string const & name)
+   : base< TWriter >(name),
+     _cnt(0) {
+}
+
+template< typename TWriter >
+void counter< TWriter >::serialize_debug(TWriter & writer) {
    std::ostringstream ostr;
-   ostr << "Counter:" << _name << ":" << _cnt << std::endl;
+   ostr << "Counter:" << this->_name << ":" << get_and_reset() << std::endl;
    writer.write(ostr.str().c_str(), ostr.str().size());
 }
 
 template< typename TWriter >
-void counter::serialize_carbon(
-   TWriter & writer,
-   std::chrono::system_clock::time_point const & begin_ts,
-   std::chrono::system_clock::time_point const & end_ts) const {
-
-   std::chrono::nanoseconds const diff(end_ts-begin_ts);
-   std::chrono::nanoseconds half_diff(diff);
-   half_diff /= 2;
-   std::chrono::system_clock::time_point const mid(begin_ts + half_diff);
+void counter< TWriter >::serialize_carbon(TWriter & writer) {
+   std::chrono::system_clock::time_point const end_ts(
+      std::chrono::high_resolution_clock::now());
+   std::chrono::system_clock::time_point const mid(
+      timeutils::interval_middle(this->_begin_ts, end_ts));
+   std::chrono::nanoseconds const diff(end_ts - this->_begin_ts);
 
    double const cnt_per_nsec(
-      static_cast<double>(_cnt)
+      static_cast<double>(get_and_reset())
       / std::chrono::duration_cast<std::chrono::nanoseconds>(
          diff).count());
    double const cnt_per_sec(cnt_per_nsec * 1000000000);
 
    std::ostringstream ostr;
-   ostr << _name << " " << cnt_per_sec << " "
+   ostr << this->_name << " " << cnt_per_sec << " "
         << std::chrono::duration_cast<std::chrono::seconds>(
            mid.time_since_epoch()).count() << std::endl;
    writer.write(ostr.str().c_str(), ostr.str().size());
+   this->_begin_ts = end_ts;
 }
 
 }
