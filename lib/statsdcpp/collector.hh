@@ -5,6 +5,7 @@
 #include <chrono>
 #include <statsdcpp/counter.hh>
 #include <statsdcpp/measure.hh>
+#include <statsdcpp/correlator.hh>
 
 namespace statsdcpp {
 
@@ -19,6 +20,8 @@ public:
    counter_sp< TWriter > generate_counter(std::string const & name);
    template< typename TQuantity > measure_sp< TQuantity, TWriter >
       generate_measure(std::string const & name);
+   template< typename TUID, typename TPID > correlator_sp< TWriter, TUID, TPID >
+      generate_correlator(std::string const & name);
 
    // Force flushing all counters to the writer
    void flush();
@@ -53,6 +56,17 @@ collector< TSerializer, TWriter >::generate_measure(
    std::string const & name) {
    measure_sp< TQuantity, TWriter > nobj(
       std::make_shared< measure< TQuantity, TWriter > >(name));
+   _measurables.push_back(nobj);
+   return nobj;
+}
+
+template< typename TSerializer, typename TWriter>
+template< typename TUID, typename TPID >
+correlator_sp< TWriter, TUID, TPID >
+collector< TSerializer, TWriter >::generate_correlator(
+   std::string const & name) {
+   correlator_sp< TWriter, TUID, TPID > nobj(
+      std::make_shared< correlator< TWriter, TUID, TPID > >(name));
    _measurables.push_back(nobj);
    return nobj;
 }

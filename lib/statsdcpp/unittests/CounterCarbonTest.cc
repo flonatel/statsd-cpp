@@ -75,7 +75,7 @@ TEST_F(CarbonSimple, test_one_counter_inc77twice) {
       std::vector<std::string> const lvec(split(lines[2], ' '));
       ASSERT_EQ(3, lvec.size());
       ASSERT_EQ(lvec[0], "org.flonatel.statsd.test.cnt1.interval");
-      ASSERT_NEAR(180000, stod(lvec[1]), 100000);
+      ASSERT_NEAR(180000, stod(lvec[1]), 150000);
       ASSERT_NEAR(time(0), stod(lvec[2]), 10);
    }
 

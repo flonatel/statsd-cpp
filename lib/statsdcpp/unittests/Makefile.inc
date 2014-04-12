@@ -61,6 +61,22 @@ tests_unit_CounterCarbonTest_LDADD = \
         lib/libstatsdcpp.la \
 	contrib/gtest/lib/libgtest.la
 
+
+noinst_PROGRAMS += tests/unit/CorrelatorTest
+
+TESTS += tests/unit/CorrelatorTest
+
+tests_unit_CorrelatorTest_SOURCES = \
+        lib/statsdcpp/unittests/CorrelatorTest.cc
+
+tests_unit_CorrelatorTest_CPPFLAGS = \
+        -I$(top_srcdir)/${GOOGLE_TEST_INCLUDE} \
+        -I$(top_srcdir)/lib
+
+tests_unit_CorrelatorTest_LDADD = \
+        lib/libstatsdcpp.la \
+	contrib/gtest/lib/libgtest.la
+
 # Local Variables:
 # mode: makefile
 # End:

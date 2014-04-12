@@ -76,6 +76,8 @@ using pressure = quantity<1,-1,-2>;
 
 constexpr factor percent(0.01);
 constexpr length meter(1.0);
+constexpr time second(1.0);
+constexpr time nanoseconds(second / factor(1000000000.0));
 
 constexpr factor operator"" _percent(long double x) {
    return number(x) * percent; }
