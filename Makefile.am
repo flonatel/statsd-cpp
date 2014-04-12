@@ -31,3 +31,6 @@ include lib/statsdcpp/Makefile.inc
 
 # Unittests
 include lib/statsdcpp/unittests/Makefile.inc
+
+# Performancetests
+include lib/statsdcpp/performancetests/Makefile.inc
