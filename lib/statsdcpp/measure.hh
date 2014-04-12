@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <mutex>
+#include <sstream>
 #include <statsdcpp/quantity.hh>
 #include <statsdcpp/base.hh>
 #include <statsdcpp/timeutils.hh>
