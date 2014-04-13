@@ -23,6 +23,10 @@ public:
 
    void add(TQuantity const & v) {
       std::lock_guard< std::mutex > lock(_data_mutex);
+      add_locked(v);
+   }
+
+   void add_locked(TQuantity const & v) {
       if(_cnt_val==0) {
          _min = v;
          _max = v;

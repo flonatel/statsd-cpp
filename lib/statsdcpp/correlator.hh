@@ -111,7 +111,7 @@ correlator< TWriter, TUID, TPID >::seen_locked(
                          this->_name + ".times" + pids));
       auto const cntr( std::make_shared< counter< TWriter > > (
                           this->_name + ".count" + pids));
-      msr->add(
+      msr->add_locked(
          siunits::factor(std::chrono::duration_cast<std::chrono::nanoseconds>(
                             diff).count()) * siunits::nanoseconds);
       cntr->inc();
@@ -122,7 +122,7 @@ correlator< TWriter, TUID, TPID >::seen_locked(
          std::make_pair(
             std::make_tuple(std::get<0>(fuid->second), pid), tv));
    } else {
-      ftimes->second.duration->add(
+      ftimes->second.duration->add_locked(
          siunits::factor(std::chrono::duration_cast<std::chrono::nanoseconds>(
                             diff).count()) * siunits::nanoseconds);
       ftimes->second.count->inc();
