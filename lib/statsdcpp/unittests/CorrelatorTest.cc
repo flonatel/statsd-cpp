@@ -16,40 +16,50 @@ public:
                          statsdcpp::output::string > collector;
 };
 
+enum class checkpoint {
+   cp_in, cp_in_queue, cp_odd, cp_even, cp_out };
+
+
 TEST_F(CorrelatorTest, test_correlation) {
    using namespace statsdcpp::siunits;
 
-   statsdcpp::correlator_sp<
-      statsdcpp::output::string, int, std::string > crltr(
-      collector.generate_correlator<int, std::string>(
-         "org.flonatel.statsd.test.crltr"));
+   std::vector< statsdcpp::transition<checkpoint> > const tr {
+      { checkpoint::cp_in, checkpoint::cp_in_queue, "IN->IQ" },
+      { checkpoint::cp_in_queue, checkpoint::cp_odd, "IQ->ODD" },
+      { checkpoint::cp_in_queue, checkpoint::cp_even, "IQ->EVEN" }
+   };
 
-   crltr->in(7, "IN");
-   crltr->in(9, "IN");
-   crltr->in(12, "IN");
-   crltr->in(15, "IN");
+   statsdcpp::correlator_sp<
+      statsdcpp::output::string, int, checkpoint > crltr(
+      collector.generate_correlator<int, checkpoint >(
+         "org.flonatel.statsd.test.crltr", tr));
+
+   crltr->in(7, checkpoint::cp_in);
+   crltr->in(9, checkpoint::cp_in);
+   crltr->in(12, checkpoint::cp_in);
+   crltr->in(15, checkpoint::cp_in);
 
    usleep(100);
 
-   crltr->seen(7, "in-queue");
-   crltr->seen(9, "in-queue");
-   crltr->seen(12, "in-queue");
-   crltr->seen(17, "in-queue");
+   crltr->seen(7, checkpoint::cp_in_queue);
+   crltr->seen(9, checkpoint::cp_in_queue);
+   crltr->seen(12, checkpoint::cp_in_queue);
+   crltr->seen(17, checkpoint::cp_in_queue);
 
    usleep(70);
 
-   crltr->seen(7, "odd-queue");
-   crltr->seen(9, "odd-queue");
-   crltr->seen(12, "even-queue");
+   crltr->seen(7, checkpoint::cp_odd);
+   crltr->seen(9, checkpoint::cp_odd);
+   crltr->seen(12, checkpoint::cp_even);
 
    usleep(50);
 
-   crltr->out(7, "OUT");
-   crltr->out(9, "OUT");
+   crltr->out(7, checkpoint::cp_out);
+   crltr->out(9, checkpoint::cp_out);
 
    usleep(30);
 
-   crltr->out(12, "OUT");
+   crltr->out(12, checkpoint::cp_out);
 
    collector.flush();
 
