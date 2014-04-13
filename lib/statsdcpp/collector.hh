@@ -20,8 +20,11 @@ public:
    counter_sp< TWriter > generate_counter(std::string const & name);
    template< typename TQuantity > measure_sp< TQuantity, TWriter >
       generate_measure(std::string const & name);
-   template< typename TUID, typename TPID > correlator_sp< TWriter, TUID, TPID >
-      generate_correlator(std::string const & name);
+   template< typename TUID, typename TCheckpoint >
+   correlator_sp< TWriter, TUID, TCheckpoint >
+   generate_correlator(
+      std::string const & name,
+      std::vector< statsdcpp::transition< TCheckpoint > > const & iv);
 
    // Force flushing all counters to the writer
    void flush();
@@ -61,12 +64,13 @@ collector< TSerializer, TWriter >::generate_measure(
 }
 
 template< typename TSerializer, typename TWriter>
-template< typename TUID, typename TPID >
-correlator_sp< TWriter, TUID, TPID >
+template< typename TUID, typename TCheckpoint >
+correlator_sp< TWriter, TUID, TCheckpoint >
 collector< TSerializer, TWriter >::generate_correlator(
-   std::string const & name) {
-   correlator_sp< TWriter, TUID, TPID > nobj(
-      std::make_shared< correlator< TWriter, TUID, TPID > >(name));
+   std::string const & name,
+   std::vector< statsdcpp::transition< TCheckpoint > > const & iv) {
+   correlator_sp< TWriter, TUID, TCheckpoint > nobj(
+      std::make_shared< correlator< TWriter, TUID, TCheckpoint > >(name, iv));
    _measurables.push_back(nobj);
    return nobj;
 }
