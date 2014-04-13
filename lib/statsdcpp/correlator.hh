@@ -40,8 +40,12 @@ private:
    std::map< TUID, std::tuple<
                       TPID, std::chrono::system_clock::time_point> > _uids;
 
-   std::map< std::tuple< TPID, TPID >,
-             measure_sp<siunits::time, TWriter > > _times;
+   struct times_value {
+      measure_sp< siunits::time, TWriter >  duration;
+      counter_sp< TWriter > count;
+   };
+
+   std::map< std::tuple< TPID, TPID >, times_value > _times;
 
    counter< TWriter > _seen_uid_not_found;
    counter< TWriter > _dropped_uids;
@@ -102,20 +106,26 @@ correlator< TWriter, TUID, TPID >::seen_locked(
    auto const ftimes(_times.find(std::make_tuple(std::get<0>(fuid->second),
                                                  pid)));
    if(ftimes==_times.end()) {
+      std::string const pids("." + std::get<0>(fuid->second) + "." + pid);
       auto const msr( std::make_shared< measure< siunits::time, TWriter > > (
-                         this->_name + "." + std::get<0>(fuid->second)
-                      + "." + pid));
+                         this->_name + ".times" + pids));
+      auto const cntr( std::make_shared< counter< TWriter > > (
+                          this->_name + ".count" + pids));
       msr->add(
          siunits::factor(std::chrono::duration_cast<std::chrono::nanoseconds>(
                             diff).count()) * siunits::nanoseconds);
+      cntr->inc();
+
+      times_value const tv{ msr, cntr };
 
       _times.insert(
          std::make_pair(
-            std::make_tuple(std::get<0>(fuid->second), pid), msr));
+            std::make_tuple(std::get<0>(fuid->second), pid), tv));
    } else {
-      ftimes->second->add(
+      ftimes->second.duration->add(
          siunits::factor(std::chrono::duration_cast<std::chrono::nanoseconds>(
                             diff).count()) * siunits::nanoseconds);
+      ftimes->second.count->inc();
    }
 }
 
@@ -133,7 +143,8 @@ correlator< TWriter, TUID, TPID >::serialize_debug(TWriter & writer) {
    std::lock_guard< std::mutex > lock(_data_mutex);
    _seen_uid_not_found.serialize_debug(writer);
    for(auto const & timescur : _times) {
-      timescur.second->serialize_debug(writer);
+      timescur.second.duration->serialize_debug(writer);
+      timescur.second.count->serialize_debug(writer);
    }
 }
 
@@ -143,7 +154,8 @@ correlator< TWriter, TUID, TPID >::serialize_carbon(TWriter & writer) {
    std::lock_guard< std::mutex > lock(_data_mutex);
    _seen_uid_not_found.serialize_carbon(writer);
    for(auto const & timescur : _times) {
-      timescur.second->serialize_carbon(writer);
+      timescur.second.duration->serialize_carbon(writer);
+      timescur.second.count->serialize_carbon(writer);
    }
    _times.clear();
 }
